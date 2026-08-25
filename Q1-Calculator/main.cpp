@@ -1,12 +1,28 @@
-#include <QApplication>
 #include "mainwindow.h"
+#include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QApplication a(argc, argv);
 
-    MainWindow window;
-    window.show();
+    QTranslator translator;
+    const QStringList uiLanguages = QLocale::system().uiLanguages();
 
-    return app.exec();
+    for (const QString &locale : uiLanguages)
+    {
+        const QString baseName = "CalculatorAssignment_" + QLocale(locale).name();
+
+        if (translator.load(":/i18n/" + baseName))
+        {
+            a.installTranslator(&translator);
+            break;
+        }
+    }
+
+    MainWindow w;
+    w.show();
+
+    return QApplication::exec();
 }
